@@ -1,0 +1,1 @@
+CREATE TYPE roles AS ENUM('Authenticated', 'Administrator', 'DepartmentHead', 'Executor', 'ResponsibleExecutor')
