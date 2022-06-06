@@ -49,6 +49,8 @@ func main() {
 	tokenSecret := controllers.RandStringRunes(256)
 
 	http.HandleFunc("/get-token", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Methods", "GET")
+
 		var authInfo models.AuthInfo
 		json.NewDecoder(r.Body).Decode(&authInfo)
 
@@ -109,6 +111,8 @@ func main() {
 	})
 
 	http.HandleFunc("/validate-token", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Methods", "GET")
+
 		var request models.ValidateTokenRequest
 		json.NewDecoder(r.Body).Decode(&request)
 
