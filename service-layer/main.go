@@ -36,6 +36,12 @@ func initZapLog() *zap.Logger {
 	return logger
 }
 
+func setupResponse(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+}
+
 func main() {
 	logger := initZapLog()
 	zap.ReplaceGlobals(logger)
@@ -49,8 +55,6 @@ func main() {
 	tokenSecret := controllers.RandStringRunes(256)
 
 	http.HandleFunc("/get-token", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Methods", "GET")
-
 		var authInfo models.AuthInfo
 		json.NewDecoder(r.Body).Decode(&authInfo)
 
@@ -64,6 +68,7 @@ func main() {
 
 		json.NewEncoder(w).Encode(token)
 		w.WriteHeader(200)
+		setupResponse(&w)
 	})
 
 	http.HandleFunc("/set-user", func(w http.ResponseWriter, r *http.Request) {
@@ -111,8 +116,6 @@ func main() {
 	})
 
 	http.HandleFunc("/validate-token", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Methods", "GET")
-
 		var request models.ValidateTokenRequest
 		json.NewDecoder(r.Body).Decode(&request)
 
@@ -127,6 +130,7 @@ func main() {
 		response := models.ValidateTokenResponse{IsValid: isValid}
 		json.NewEncoder(w).Encode(response)
 		w.WriteHeader(200)
+		setupResponse(&w)
 	})
 
 	http.ListenAndServe("localhost:5080", nil)
